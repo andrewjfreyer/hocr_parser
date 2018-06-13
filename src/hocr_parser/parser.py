@@ -81,7 +81,7 @@ class HOCRDocument(HOCRElement):
         if not is_path:
             hocr_html = BeautifulSoup(source, 'html.parser')
         else:
-            hocr_html = BeautifulSoup(open(source, 'r').read(), 'html.parser')
+            hocr_html = BeautifulSoup(open(source, 'r', encoding="utf-8").read(), 'html.parser')
 
         super(HOCRDocument, self).__init__(hocr_html, None, 'div', Page.HOCR_PAGE_TAG, Page)
 
@@ -102,6 +102,16 @@ class HOCRDocument(HOCRElement):
     def npages(self):
         return len(self._elements)
 
+    @property
+    def ocr(self):
+        for tag in self._hocr_html.find_all("meta"):
+            if "esseract" in tag.get("content",None):
+                return "Tess"
+            if "cropy" in tag.get("content",None):
+                return "Ocro"
+            if "ABBYY" in tag.get("content",None):
+                return "Abbyy"
+        return "Abbyy"
 
 class Page(HOCRElement):
 
@@ -126,8 +136,6 @@ class Page(HOCRElement):
     @property
     def nareas(self):
         return len(self._elements)
-
-
 
 class Area(HOCRElement):
 
@@ -177,13 +185,14 @@ class Paragraph(HOCRElement):
         output += self._elements[-1].ocr_text
         return output
 
-
 class Line(HOCRElement):
 
     HOCR_LINE_TAG = "ocr_line"
 
     def __init__(self, parent, hocr_html):
         super(Line, self).__init__(hocr_html, parent, 'span', Word.HOCR_WORD_TAG, Word)
+        self._ocr_text_normalized = None # custom property, none if not assigned
+
 
     @property
     def words(self):
@@ -202,13 +211,31 @@ class Line(HOCRElement):
         output += self._elements[-1].ocr_text
         return output
 
+    @property 
+    def ocr_text_normalized(self):
+        return self._ocr_text_normalized
+    
+    @ocr_text_normalized.setter
+    def ocr_text_normalized(self, new_text):
+        self._ocr_text_normalized = new_text
 
 class Word(HOCRElement):
 
     HOCR_WORD_TAG = "ocrx_word"
+    _xwconf = None
+    _xconfs = None
 
     def __init__(self, parent, hocr_html):
         super(Word, self).__init__(hocr_html, parent, None, None, None)
+        title = hocr_html.attrs['title']
+        titlesplit = title.split(';')
+        for element in titlesplit:
+            if 'x_wconf' in element:
+                self._xwconf = element.strip().split(' ')[1]
+            if "x_confs" in element:
+                self._xconfs = element.strip().split(' ')[1:]
+                break
+
 
     @property
     def ocr_text(self):
