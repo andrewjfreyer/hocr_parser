@@ -1,4 +1,4 @@
-__author__ = 'Rafa Haro <rh@athento.com>'
+__author__ = 'Rafa Haro <rh@athento.com>; edited by Andrew J Freyer <andrew.freyer@gmail.com>'
 
 from abc import ABCMeta, abstractmethod
 from bs4 import BeautifulSoup
@@ -47,6 +47,14 @@ class HOCRElement:
     @property
     def coordinates(self):
         return self.__coordinates
+
+    @property
+    def width(self):
+        return self.__coordinates[2] - self.__coordinates[0]
+
+    @property
+    def height(self):
+        return self.__coordinates[3] - self.__coordinates[1]
 
     @property
     def html(self):
@@ -177,6 +185,61 @@ class Paragraph(HOCRElement):
         return len(self._elements)
 
     @property
+    def alignment(self):
+        default_dpi=300
+        page_width=default_dpi*8.5-default_dpi*2
+        page_center=page_width/2
+
+        left=[]
+        right=[]
+        center=[]
+        for element in self._elements[:-1]:
+            left.append(element.coordinates[0])
+            right.append(element.coordinates[2])
+            center.append(element.coordinates[2] - element.coordinates[0])
+
+        #calculate statistics
+        mean_left = sum(left)/len(left)
+        variance_left = sum([((x - mean_left) ** 2) for x in left]) / len(left)
+        stddev_left = variance_left ** 0.5
+
+        mean_right = sum(right)/len(right)
+        variance_right = sum([((x - mean_right) ** 2) for x in right]) / len(right)
+        stddev_right = variance_right ** 0.5        
+
+        mean_center = sum(center)/len(center)
+        variance_center = sum([((x - mean_center) ** 2) for x in center]) / len(center)
+        stddev_center = variance_center ** 0.5
+        center_offset_center = page_center - mean_center
+
+        left_aligned=(stddev_left < 10)
+        right_aligned=(stddev_right < 10)
+        center_aligned=(stddev_center < 10)
+        
+        if len(self._elements) > 1:
+
+            if left_aligned and not right_aligned:
+                return "left"
+
+            elif not left_aligned and right_aligned:
+                return "right"
+            
+            elif left_aligned and right_aligned:
+                return "justified"
+
+            elif not left_aligned and not right_aligned and center_aligned:
+                return "center"
+
+        else:
+            if center_offset_center < 10:
+                return "center"
+            else:
+                return "left"
+
+        return "unknown"
+
+
+    @property
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
@@ -192,7 +255,6 @@ class Line(HOCRElement):
     def __init__(self, parent, hocr_html):
         super(Line, self).__init__(hocr_html, parent, 'span', Word.HOCR_WORD_TAG, Word)
         self._ocr_text_normalized = None # custom property, none if not assigned
-
 
     @property
     def words(self):
@@ -235,7 +297,6 @@ class Word(HOCRElement):
             if "x_confs" in element:
                 self._xconfs = element.strip().split(' ')[1:]
                 break
-
 
     @property
     def ocr_text(self):
