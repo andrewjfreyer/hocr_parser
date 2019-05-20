@@ -221,9 +221,9 @@ class Paragraph(HOCRElement):
             stddev_center = variance_center ** 0.5
             center_offset_center = page_center - mean_center
 
-        left_aligned=(stddev_left < 150)
-        right_aligned=(stddev_right < 150)
-        center_aligned=(stddev_center < 150)
+        left_aligned=(stddev_left < default_dpi / 4)
+        right_aligned=(stddev_right < default_dpi / 4)
+        center_aligned=(stddev_center < default_dpi / 4)
         
         if left_aligned and not right_aligned:
             return "left"
