@@ -199,6 +199,11 @@ class Paragraph(HOCRElement):
             right.append(element.coordinates[2])
             center.append(element.coordinates[2] - element.coordinates[0])
 
+        #set to default dpi
+        stddev_left=default_dpi
+        stddev_right=default_dpi
+        stddev_center=default_dpi
+
         #calculate statistics
         if len(left) > 0:
             mean_left = sum(left)/len(left)
@@ -216,35 +221,27 @@ class Paragraph(HOCRElement):
             stddev_center = variance_center ** 0.5
             center_offset_center = page_center - mean_center
 
-        stddev_left=999
-        stddev_right=999
-        stddev_center=999
+        left_aligned=(stddev_left < 150)
+        right_aligned=(stddev_right < 150)
+        center_aligned=(stddev_center < 150)
         
-        left_aligned=(stddev_left < 10)
-        right_aligned=(stddev_right < 10)
-        center_aligned=(stddev_center < 10)
+        if left_aligned and not right_aligned:
+            return "left"
+
+        elif not left_aligned and right_aligned:
+            return "right"
         
-        if len(self._elements) > 1:
+        elif left_aligned and right_aligned:
+            return "justified"
 
-            if left_aligned and not right_aligned:
-                return "left"
+        elif not left_aligned and not right_aligned and center_aligned:
+            return "center"
 
-            elif not left_aligned and right_aligned:
-                return "right"
-            
-            elif left_aligned and right_aligned:
-                return "justified"
-
-            elif not left_aligned and not right_aligned and center_aligned:
-                return "center"
+        elif center_offset_center < 10:
+            return "center"
 
         else:
-            if center_offset_center < 10:
-                return "center"
-            else:
-                return "left"
-
-        return "unknown"
+            return "unknown"
 
 
     @property
