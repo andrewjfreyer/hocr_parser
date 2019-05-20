@@ -194,10 +194,21 @@ class Paragraph(HOCRElement):
         right=[]
         center=[]
 
-        for element in self._elements:
-            left.append(element.coordinates[0])
-            right.append(element.coordinates[2])
-            center.append(element.coordinates[2] - element.coordinates[0])
+        if len(self._elements) > 1:
+            #skip the first line due to indentation
+            for element in self._elements[1:]:
+                left.append(element.coordinates[0])
+                right.append(element.coordinates[2])
+                center.append(element.coordinates[2] - element.coordinates[0])
+
+        elif len(self._elements) == 0:
+            return "none"
+
+        else:
+            left=[self._elements[0].coordinates[0]]
+            right=[self._elements[0].coordinates[2]]
+            center=[self._elements[0].coordinates[2] - self._elements[0].coordinates[0]]
+
 
         #set to default dpi
         stddev_left=default_dpi
@@ -225,7 +236,7 @@ class Paragraph(HOCRElement):
         right_aligned=(stddev_right < default_dpi / 4)
         center_aligned=(stddev_center < default_dpi / 4)
         
-        additional="std:" + stddev_left + "," + stddev_right + ","+ stddev_center
+        additional="std:" + str(stddev_left) + "," + str(stddev_right) + ","+ str(stddev_center)
 
         if left_aligned and not right_aligned:
             return "left" + additional
