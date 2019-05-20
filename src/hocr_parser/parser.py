@@ -225,23 +225,25 @@ class Paragraph(HOCRElement):
         right_aligned=(stddev_right < default_dpi / 4)
         center_aligned=(stddev_center < default_dpi / 4)
         
+        additional="std:" + stddev_left + "," + stddev_right + ","+ stddev_center
+
         if left_aligned and not right_aligned:
-            return "left"
+            return "left" + additional
 
         elif not left_aligned and right_aligned:
-            return "right"
+            return "right" + additional
         
         elif left_aligned and right_aligned:
-            return "justified"
+            return "justified" + additional
 
         elif not left_aligned and not right_aligned and center_aligned:
-            return "center"
+            return "center" + additional
 
         elif center_offset_center < 10:
-            return "center"
+            return "center" + additional
 
         else:
-            return "unknown"
+            return "unknown" + additional
 
 
     @property
