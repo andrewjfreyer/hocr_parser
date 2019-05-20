@@ -193,6 +193,10 @@ class Paragraph(HOCRElement):
         left=[]
         right=[]
         center=[]
+        
+        if len(self._elements) == 0:
+            return "none"
+
         for element in self._elements[:-1]:
             left.append(element.coordinates[0])
             right.append(element.coordinates[2])
