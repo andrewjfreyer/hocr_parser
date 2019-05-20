@@ -193,29 +193,33 @@ class Paragraph(HOCRElement):
         left=[]
         right=[]
         center=[]
-        
-        if len(self._elements) == 0:
-            return "none"
 
-        for element in self._elements[:-1]:
+        for element in self._elements:
             left.append(element.coordinates[0])
             right.append(element.coordinates[2])
             center.append(element.coordinates[2] - element.coordinates[0])
 
         #calculate statistics
-        mean_left = sum(left)/len(left)
-        variance_left = sum([((x - mean_left) ** 2) for x in left]) / len(left)
-        stddev_left = variance_left ** 0.5
+        if len(left) > 0:
+            mean_left = sum(left)/len(left)
+            variance_left = sum([((x - mean_left) ** 2) for x in left]) / len(left)
+            stddev_left = variance_left ** 0.5
 
-        mean_right = sum(right)/len(right)
-        variance_right = sum([((x - mean_right) ** 2) for x in right]) / len(right)
-        stddev_right = variance_right ** 0.5        
+        if len(right) > 0:
+            mean_right = sum(right)/len(right)
+            variance_right = sum([((x - mean_right) ** 2) for x in right]) / len(right)
+            stddev_right = variance_right ** 0.5        
 
-        mean_center = sum(center)/len(center)
-        variance_center = sum([((x - mean_center) ** 2) for x in center]) / len(center)
-        stddev_center = variance_center ** 0.5
-        center_offset_center = page_center - mean_center
+        if len(center) > 0:
+            mean_center = sum(center)/len(center)
+            variance_center = sum([((x - mean_center) ** 2) for x in center]) / len(center)
+            stddev_center = variance_center ** 0.5
+            center_offset_center = page_center - mean_center
 
+        stddev_left=999
+        stddev_right=999
+        stddev_center=999
+        
         left_aligned=(stddev_left < 10)
         right_aligned=(stddev_right < 10)
         center_aligned=(stddev_center < 10)
