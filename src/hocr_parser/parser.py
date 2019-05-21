@@ -245,8 +245,28 @@ class Paragraph(HOCRElement):
         right_aligned = (stddev_right < grid_width and abs(max(right) - page_width) < grid_width)
         center_aligned = (stddev_center < grid_width and center_offset_center < grid_width)
 
+        append="\n\nleft: %s\nright: %s\ncenter: %s\ncenter: %s\nindented: %s\naligned:\tl: %s r: %s c: %s\nwidth:\t%s\ncenter:\t%s\nstdev: \tl: %s r: %s c: %s\navg: \tl: %s r: %s c: %s\n\n%s\n\n", 
+                    " ".join(map(str, left)),
+                    " ".join(map(str, right)),
+                    " ".join(map(str, center)),
+                    str(center_offset_center),
+                    str(indented),
+                    str(left_aligned),
+                    str(right_aligned),
+                    str(center_aligned),
+                    str(page_width),
+                    str(page_center),
+                    str(stddev_left),
+                    str(stddev_right),
+                    str(stddev_center),
+                    str(mean_left),
+                    str(mean_right),
+                    str(mean_center),
+                    paragraph.alignment,
+                    paragraph.ocr_text)
+
         if left_aligned and not right_aligned: 
-            return "left"
+            return "left" + append
         elif not left_aligned and right_aligned: 
             return "right"
         elif left_aligned and right_aligned and not center_aligned: 
