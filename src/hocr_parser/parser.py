@@ -163,9 +163,10 @@ class Area(HOCRElement):
     def ocr_text(self, ignore_header=False):
         output = ""
         for element in self._elements[:-1]:
-            if not element.alignment == "header" or not ignore_header:
+            if not (element.alignment == "header" and ignore_header):
                 output += element.ocr_text()
-                output += "\n"
+                if len(output) > 0: 
+                    output += "\n"
         output += self._elements[-1].ocr_text()
         return output
 
