@@ -94,10 +94,10 @@ class HOCRDocument(HOCRElement):
         super(HOCRDocument, self).__init__(hocr_html, None, 'div', Page.HOCR_PAGE_TAG, Page)
 
     @property
-    def ocr_text(self):
+    def ocr_text(self,ignore_header=False):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text
+            output += element.ocr_text(ignore_header = ignore_header)
             output += "\n\n"
         output += self._elements[-1].ocr_text
         return output
@@ -129,10 +129,10 @@ class Page(HOCRElement):
         super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
 
     @property
-    def ocr_text(self):
+    def ocr_text(self,ignore_header=False):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text
+            output += element.ocr_text(ignore_header=ignore_header)
             output += "\n\n"
         output += self._elements[-1].ocr_text
         return output
@@ -161,11 +161,12 @@ class Area(HOCRElement):
         return len(self._elements)
 
     @property
-    def ocr_text(self):
+    def ocr_text(self, ignore_header=False):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text
-            output += "\n"
+            if not element.alignment == "header" or not ignore_header:
+                output += element.ocr_text
+                output += "\n"
         output += self._elements[-1].ocr_text
         return output
 
