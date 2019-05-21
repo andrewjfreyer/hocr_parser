@@ -185,23 +185,28 @@ class Paragraph(HOCRElement):
         return len(self._elements)
 
     @property
-    def alignment(self):
+    def alignment(self, dpi=250):
         if len(self._elements) == 0:
             return "none"
         
-        default_dpi=250
+        default_dpi=dpi
         margin = 1.0
 
         page_width=default_dpi*(8.5 - margin * 2)
         grid_width=default_dpi * 0.1
         page_center=page_width / 2
 
+        page_header=1.3
+
         left=[]
         right=[]
+        bottom = []
         center=[]
         indented = False
+        header = False
 
         for line in self._elements:
+
             tab_round_left=int((line.coordinates[0] - margin*default_dpi) / grid_width) * grid_width
             tab_round_right=int((line.coordinates[2] - margin*default_dpi) / grid_width) * grid_width
 
@@ -217,7 +222,11 @@ class Paragraph(HOCRElement):
 
             left.append(tab_round_left) 
             right.append(tab_round_right)
+            bottom.append(ine.coordinates[1])
             center.append((tab_round_right + tab_round_left)/2)
+
+        #is within header?
+        header = max(bottom) < page_header * default_dpi
 
         #set to default dpi
         stddev_left=default_dpi
@@ -245,7 +254,9 @@ class Paragraph(HOCRElement):
         right_aligned = (stddev_right < grid_width and abs(max(right) - page_width) < grid_width and not center_offset_center < grid_width)
         center_aligned = (stddev_center < grid_width and center_offset_center < grid_width and len(self._elements) <  )
 
-        if left_aligned and not right_aligned: 
+        if header:
+            return "header"
+        elif left_aligned and not right_aligned: 
             return "left"
         elif not left_aligned and right_aligned: 
             return "right"
