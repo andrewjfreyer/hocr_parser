@@ -93,7 +93,6 @@ class HOCRDocument(HOCRElement):
 
         super(HOCRDocument, self).__init__(hocr_html, None, 'div', Page.HOCR_PAGE_TAG, Page)
 
-    @property
     def ocr_text(self,ignore_header=False):
         output = ""
         for element in self._elements[:-1]:
@@ -129,7 +128,6 @@ class Page(HOCRElement):
     def __init__(self, parent, hocr_html):
         super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
 
-    @property
     def ocr_text(self,ignore_header=False):
         output = ""
         for element in self._elements[:-1]:
@@ -162,7 +160,6 @@ class Area(HOCRElement):
     def nparagraphs(self):
         return len(self._elements)
 
-    @property
     def ocr_text(self, ignore_header=False):
         output = ""
         for element in self._elements[:-1]:
@@ -270,7 +267,6 @@ class Paragraph(HOCRElement):
         else:
             return "left"
 
-    @property
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
@@ -295,7 +291,6 @@ class Line(HOCRElement):
     def nwords(self):
         return len(self._elements)
 
-    @property
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
@@ -329,7 +324,6 @@ class Word(HOCRElement):
                 self._xconfs = element.strip().split(' ')[1:]
                 break
 
-    @property
     def ocr_text(self):
         word = self._hocr_html.string
         if word is not None:
