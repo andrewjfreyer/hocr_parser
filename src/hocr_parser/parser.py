@@ -188,6 +188,73 @@ class Paragraph(HOCRElement):
     def alignment(self):
         if len(self._elements) == 0:
             return "none"
+        
+        default_dpi=250
+        margin = 1.0
+
+        page_width=default_dpi*(8.5 - margin * 2)
+        grid_width=default_dpi * 0.1
+        page_center=page_width / 2
+
+        left=[]
+        right=[]
+        center=[]
+        indented = False
+
+        for line in self._elements:
+            tab_round_left=int((line.coordinates[0] - margin*default_dpi) / grid_width) * grid_width
+            tab_round_right=int((line.coordinates[2] - margin*default_dpi) / grid_width) * grid_width
+
+            if len(left) == 0:
+                #is the first row within a half inch of the border here?
+                if tab_round_left <= (default_dpi * 0.5 ):
+
+                    #reduce to 0 for averaging
+                    tab_round_left=0
+
+                    #mark as indended
+                    indented=True
+
+            left.append(tab_round_left) 
+            right.append(tab_round_right)
+            center.append((tab_round_right + tab_round_left)/2)
+
+        #set to default dpi
+        stddev_left=default_dpi
+        stddev_right=default_dpi
+        stddev_center=default_dpi
+
+        #calculate statistics
+        if len(left) > 0:
+            mean_left = sum(left)/len(left)
+            variance_left = sum([((x - mean_left) ** 2) for x in left]) / len(left)
+            stddev_left = variance_left ** 0.5
+
+        if len(right) > 0:
+            mean_right = sum(right)/len(right)
+            variance_right = sum([((x - mean_right) ** 2) for x in right]) / len(right)
+            stddev_right = variance_right ** 0.5        
+
+        if len(center) > 0:
+            mean_center = sum(center)/len(center)
+            variance_center = sum([((x - mean_center) ** 2) for x in center]) / len(center)
+            stddev_center = variance_center ** 0.5
+            center_offset_center = abs(page_center - mean_center)
+
+        left_aligned = (stddev_left == 0 and not center_offset_center < grid_width)
+        right_aligned = (stddev_right < grid_width and abs(max(right) - page_width) < grid_width and not center_offset_center < grid_width)
+        center_aligned = (stddev_center < grid_width and center_offset_center < grid_width)
+
+        if left_aligned and not right_aligned: 
+            return "left"
+        elif not left_aligned and right_aligned: 
+            return "right"
+        elif left_aligned and right_aligned and not center_aligned: 
+            return "justified"    
+        elif center_aligned: 
+            return "centered" 
+        else:
+            return "unknown"
 
     @property
     def ocr_text(self):
