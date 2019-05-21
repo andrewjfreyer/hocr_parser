@@ -205,11 +205,8 @@ class Paragraph(HOCRElement):
             tab_round_left=int((line.coordinates[0] - margin*default_dpi) / grid_width) * grid_width
             tab_round_right=int((line.coordinates[2] - margin*default_dpi) / grid_width) * grid_width
 
-            app.logger.info("int ((%s - %s * %s) / %s) * %s ",line.coordinates[0],  margin, default_dpi, grid_width, grid_width)
-
             if len(left) == 0:
-                app.logger.info("%s", tab_round_left)
-                #is the first row within a half inch of the border here?
+]                #is the first row within a half inch of the border here?
                 if tab_round_left <= (default_dpi * 0.5 ):
 
                     #reduce to 0 for averaging
