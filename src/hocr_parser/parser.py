@@ -98,7 +98,8 @@ class HOCRDocument(HOCRElement):
         output = ""
         for element in self._elements[:-1]:
             output += element.ocr_text(ignore_header = ignore_header)
-            output += "\n\n"
+            if len(output) > 0: 
+                output += "\n\n"
         output += self._elements[-1].ocr_text
         return output
 
@@ -133,7 +134,8 @@ class Page(HOCRElement):
         output = ""
         for element in self._elements[:-1]:
             output += element.ocr_text(ignore_header=ignore_header)
-            output += "\n\n"
+            if len(output) > 0: 
+                output += "\n\n"
         output += self._elements[-1].ocr_text
         return output
 
