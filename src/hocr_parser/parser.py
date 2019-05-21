@@ -99,7 +99,7 @@ class HOCRDocument(HOCRElement):
             output += element.ocr_text(ignore_header = ignore_header)
             if len(output) > 0: 
                 output += "\n\n"
-        output += self._elements[-1].ocr_text
+        output += self._elements[-1].ocr_text()
         return output
 
     @property
@@ -134,7 +134,7 @@ class Page(HOCRElement):
             output += element.ocr_text(ignore_header=ignore_header)
             if len(output) > 0: 
                 output += "\n\n"
-        output += self._elements[-1].ocr_text
+        output += self._elements[-1].ocr_text()
         return output
 
     @property
@@ -164,9 +164,9 @@ class Area(HOCRElement):
         output = ""
         for element in self._elements[:-1]:
             if not element.alignment == "header" or not ignore_header:
-                output += element.ocr_text
+                output += element.ocr_text()
                 output += "\n"
-        output += self._elements[-1].ocr_text
+        output += self._elements[-1].ocr_text()
         return output
 
 class Paragraph(HOCRElement):
@@ -270,9 +270,9 @@ class Paragraph(HOCRElement):
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text
+            output += element.ocr_text()
             output += "\n"
-        output += self._elements[-1].ocr_text
+        output += self._elements[-1].ocr_text()
         return output
 
 class Line(HOCRElement):
@@ -294,9 +294,9 @@ class Line(HOCRElement):
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text
+            output += element.ocr_text()
             output += " "
-        output += self._elements[-1].ocr_text
+        output += self._elements[-1].ocr_text()
         return output
 
     @property 
