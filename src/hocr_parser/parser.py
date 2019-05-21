@@ -196,7 +196,7 @@ class Paragraph(HOCRElement):
         grid_width=default_dpi * 0.1
         page_center=page_width / 2
 
-        page_header=1.3
+        page_header=1.5
 
         left=[]
         right=[]
@@ -222,7 +222,7 @@ class Paragraph(HOCRElement):
 
             left.append(tab_round_left) 
             right.append(tab_round_right)
-            bottom.append(ine.coordinates[1])
+            bottom.append(line.coordinates[1])
             center.append((tab_round_right + tab_round_left)/2)
 
         #is within header?
