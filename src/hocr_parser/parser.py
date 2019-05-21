@@ -252,7 +252,7 @@ class Paragraph(HOCRElement):
 
         left_aligned = (stddev_left == 0 and not center_offset_center < grid_width)
         right_aligned = (stddev_right < grid_width and abs(max(right) - page_width) < grid_width and not center_offset_center < grid_width)
-        center_aligned = (stddev_center < grid_width and center_offset_center < grid_width and len(self._elements) <  )
+        center_aligned = (stddev_center < grid_width and center_offset_center < grid_width and len(self._elements) < 2 )
 
         if header:
             return "header"
