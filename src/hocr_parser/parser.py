@@ -186,29 +186,41 @@ class Paragraph(HOCRElement):
 
     @property
     def alignment(self):
-        default_dpi=300
-        page_width=default_dpi*8.5-default_dpi*2
-        page_center=page_width/2
+        if len(self._elements) == 0:
+            return "none"
+
+        default_dpi=250
+        margin = 1.0
+
+        page_width=default_dpi*(8.5 - margin * 2)
+        grid_width=default_dpi * 0.1
+        page_center=page_width / 2
 
         left=[]
         right=[]
         center=[]
+        indented = False
 
-        if len(self._elements) > 1:
-            #skip the first line due to indentation
-            for element in self._elements[1:]:
-                left.append(element.coordinates[0])
-                right.append(element.coordinates[2])
-                center.append(element.coordinates[2] - element.coordinates[0])
+        for line in self._elements:
+            tab_round_left=int((line.coordinates[0] - margin*default_dpi) / grid_width) * grid_width
+            tab_round_right=int((line.coordinates[2] - margin*default_dpi) / grid_width) * grid_width
 
-        elif len(self._elements) == 0:
-            return "none"
+            app.logger.info("int ((%s - %s * %s) / %s) * %s ",line.coordinates[0],  margin, default_dpi, grid_width, grid_width)
 
-        else:
-            left=[self._elements[0].coordinates[0]]
-            right=[self._elements[0].coordinates[2]]
-            center=[self._elements[0].coordinates[2] - self._elements[0].coordinates[0]]
+            if len(left) == 0:
+                app.logger.info("%s", tab_round_left)
+                #is the first row within a half inch of the border here?
+                if tab_round_left <= (default_dpi * 0.5 ):
 
+                    #reduce to 0 for averaging
+                    tab_round_left=0
+
+                    #mark as indended
+                    indented=True
+
+            left.append(tab_round_left) 
+            right.append(tab_round_right)
+            center.append(tab_round_right - tab_round_left)
 
         #set to default dpi
         stddev_left=default_dpi
@@ -230,32 +242,22 @@ class Paragraph(HOCRElement):
             mean_center = sum(center)/len(center)
             variance_center = sum([((x - mean_center) ** 2) for x in center]) / len(center)
             stddev_center = variance_center ** 0.5
-            center_offset_center = page_center - mean_center
+            center_offset_center = abs(page_center - mean_center)
 
-        left_aligned=(stddev_left < default_dpi / 4)
-        right_aligned=(stddev_right < default_dpi / 4)
-        center_aligned=(stddev_center < default_dpi / 4)
-        
-        additional="std:" + str(stddev_left) + "," + str(stddev_right) + ","+ str(stddev_center)
+        left_aligned = (stddev_left == 0)
+        right_aligned = (stddev_right < grid_width and abs(max(right) - page_width) < grid_width)
+        center_aligned = (stddev_center < grid_width and center_offset_center < grid_width)
 
-        if left_aligned and not right_aligned:
-            return "left" + additional
-
-        elif not left_aligned and right_aligned:
-            return "right" + additional
-        
-        elif left_aligned and right_aligned:
-            return "justified" + additional
-
-        elif not left_aligned and not right_aligned and center_aligned:
-            return "center" + additional
-
-        elif center_offset_center < 10:
-            return "center" + additional
-
+        if left_aligned and not right_aligned: 
+            return "left"
+        elif not left_aligned and right_aligned: 
+            return "right"
+        elif left_aligned and right_aligned and not center_aligned: 
+            return "justified"    
+        elif center_aligned: 
+            return "centered" 
         else:
-            return "unknown" + additional
-
+            return "unknown"
 
     @property
     def ocr_text(self):
