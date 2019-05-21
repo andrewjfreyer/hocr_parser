@@ -243,7 +243,7 @@ class Paragraph(HOCRElement):
 
         left_aligned = (stddev_left == 0 and not center_offset_center < grid_width)
         right_aligned = (stddev_right < grid_width and abs(max(right) - page_width) < grid_width and not center_offset_center < grid_width)
-        center_aligned = (stddev_center < grid_width and center_offset_center < grid_width)
+        center_aligned = (stddev_center < grid_width and center_offset_center < grid_width and len(self._elements) <  )
 
         if left_aligned and not right_aligned: 
             return "left"
@@ -254,7 +254,7 @@ class Paragraph(HOCRElement):
         elif center_aligned: 
             return "centered" 
         else:
-            return "unknown"
+            return "left"
 
     @property
     def ocr_text(self):
