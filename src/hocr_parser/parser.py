@@ -164,7 +164,7 @@ class Area(HOCRElement):
         output = ""
         for element in self._elements[:-1]:
             if not (element.alignment == "header" and ignore_header):
-                output += element.ocr_text()
+                output += "[" + element.alignment + "]" + element.ocr_text()
                 if len(output) > 0: 
                     output += "\n"
         output += self._elements[-1].ocr_text()
