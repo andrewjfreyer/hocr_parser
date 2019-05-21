@@ -99,7 +99,7 @@ class HOCRDocument(HOCRElement):
             output += element.ocr_text(ignore_header = ignore_header)
             if len(output) > 0: 
                 output += "\n\n"
-        output += self._elements[-1].ocr_text()
+        output += self._elements[-1].ocr_text(ignore_header=ignore_header)
         return output
 
     @property
@@ -134,7 +134,7 @@ class Page(HOCRElement):
             output += element.ocr_text(ignore_header=ignore_header)
             if len(output) > 0: 
                 output += "\n\n"
-        output += self._elements[-1].ocr_text()
+        output += self._elements[-1].ocr_text(ignore_header=ignore_header)
         return output
 
     @property
@@ -164,10 +164,12 @@ class Area(HOCRElement):
         output = ""
         for element in self._elements[:-1]:
             if not (element.alignment == "header" and ignore_header):
-                output += "[" + element.alignment + "]" + element.ocr_text()
+                output += element.ocr_text()
                 if len(output) > 0: 
                     output += "\n"
-        output += self._elements[-1].ocr_text()
+
+        if not (self._elements[-1].alignment == "header" and ignore_header):
+            output += self._elements[-1].ocr_text()
         return output
 
 class Paragraph(HOCRElement):
