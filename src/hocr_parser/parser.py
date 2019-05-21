@@ -261,9 +261,7 @@ class Paragraph(HOCRElement):
                     str(stddev_center),
                     str(mean_left),
                     str(mean_right),
-                    str(mean_center),
-                    paragraph.alignment,
-                    paragraph.ocr_text)
+                    str(mean_center))
 
         if left_aligned and not right_aligned: 
             return "left" + append
