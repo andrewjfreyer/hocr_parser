@@ -245,7 +245,7 @@ class Paragraph(HOCRElement):
         right_aligned = (stddev_right < grid_width and abs(max(right) - page_width) < grid_width)
         center_aligned = (stddev_center < grid_width and center_offset_center < grid_width)
 
-        append="\n\nleft: %s\nright: %s\ncenter: %s\ncenter: %s\nindented: %s\naligned:\tl: %s r: %s c: %s\nwidth:\t%s\ncenter:\t%s\nstdev: \tl: %s r: %s c: %s\navg: \tl: %s r: %s c: %s\n\n%s\n\n", 
+        append=("\n\nleft: %s\nright: %s\ncenter: %s\ncenter: %s\nindented: %s\naligned:\tl: %s r: %s c: %s\nwidth:\t%s\ncenter:\t%s\nstdev: \tl: %s r: %s c: %s\navg: \tl: %s r: %s c: %s\n\n%s\n\n", 
                     " ".join(map(str, left)),
                     " ".join(map(str, right)),
                     " ".join(map(str, center)),
