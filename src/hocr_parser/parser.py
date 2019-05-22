@@ -133,7 +133,7 @@ class Page(HOCRElement):
         for element in self._elements[:-1]:
             output += element.ocr_text(ignore_header=ignore_header)
             if len(output) > 0: 
-                output += "\n\n"
+                output += "\n"
         output += self._elements[-1].ocr_text(ignore_header=ignore_header)
         return output
 
