@@ -244,7 +244,7 @@ class Paragraph(HOCRElement):
         grid_width=default_dpi * 0.1
         page_center=page_width / 2
 
-        page_header=1.5
+        page_header = 1.0
 
         left=[]
         right=[]
@@ -313,6 +313,7 @@ class Paragraph(HOCRElement):
         elif center_aligned: 
             return "centered" 
         else:
+            print "<<< NO ALIGNMENT KNOWN >>>"
             return "left"
 
     def ocr_text(self):
