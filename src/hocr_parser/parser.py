@@ -5,10 +5,13 @@ from abc import ABCMeta, abstractmethod
 from bs4 import BeautifulSoup
 import re 
 
-SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
-SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
-
 class HOCRElement:
+
+    global SECTION_HEADER_START
+    SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
+
+    global SECTION_HEADER_END
+    SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
 
     __metaclass__ = ABCMeta
 
@@ -112,12 +115,12 @@ class HOCRDocument(HOCRElement):
             section_group =  section_group)
 
         if section_group:
-            split_output=output.split(SECTION_HEADER_START)
+            split_output=output.split(HOCRElement.SECTION_HEADER_START)
 
             key="INTRODUCTION"
             output_split={}
             for section in split_output:
-                section_split=section.split(SECTION_HEADER_END)
+                section_split=section.split(HOCRElement.SECTION_HEADER_END)
                 if len(section_split) == 2:
                     key=section_split[0]
                     content=section_split[1]
@@ -205,7 +208,7 @@ class Area(HOCRElement):
 
             if not (alignment == "header" and ignore_header):
                 if alignment == "center" and section_group:
-                    output += SECTION_HEADER_START + element.ocr_text() + SECTION_HEADER_END
+                    output += HOCRElement.SECTION_HEADER_START + element.ocr_text() + HOCRElement.SECTION_HEADER_END
 
                 else:
                     output += element.ocr_text()
