@@ -201,18 +201,17 @@ class Area(HOCRElement):
         for element in self._elements[:-1]:
             alignment=element.alignment
 
+            print alignment
+            
             if not (alignment == "header" and ignore_header):
+               
                 if alignment == "center" and section_group:
                     output += SECTION_HEADER_START + element.ocr_text() + SECTION_HEADER_END
-
                 else:
                     output += element.ocr_text()
                 if len(output) > 0: 
                     output += "\n"
                     continue
-
-
-
 
         if not (self._elements[-1].alignment == "header" and ignore_header):
             output += self._elements[-1].ocr_text()
