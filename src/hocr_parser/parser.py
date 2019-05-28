@@ -301,14 +301,13 @@ class Paragraph(HOCRElement):
         elif center_aligned: 
             return "centered" 
         else:
-            print "<<< NO ALIGNMENT KNOWN >>>"
             return "left"
 
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
             output += element.ocr_text()
-            output += "\n"
+            output += "\n\n"
         output += self._elements[-1].ocr_text()
         return output
 
