@@ -107,8 +107,8 @@ class HOCRDocument(HOCRElement):
                 output += "\n\n"
         
         output += self._elements[-1].ocr_text(
-            ignore_header=ignore_header,
-            section_group =  section_group)
+            ignore_header = ignore_header,
+            section_group = section_group)
 
         if section_group:
             split_output=output.split(SECTION_HEADER_START)
@@ -116,6 +116,7 @@ class HOCRDocument(HOCRElement):
             key="INTRODUCTION"
             output_split={}
             for section in split_output:
+                
                 section_split=section.split(SECTION_HEADER_END)
                 if len(section_split) == 2:
                     key=section_split[0]
@@ -199,22 +200,9 @@ class Area(HOCRElement):
     def ocr_text(self, ignore_header=False, section_group = False):
         output = ""
         for element in self._elements[:-1]:
-            alignment=element.alignment
-
-            print "[" + alignment + "] " + element.ocr_text().encode('utf-8')
-
-            if not (alignment == "header" and ignore_header):
-               
-                if alignment == "centered" and section_group:
-                    output += SECTION_HEADER_START + element.ocr_text() + SECTION_HEADER_END
-                else:
-                    output += element.ocr_text()
-                if len(output) > 0: 
-                    output += "\n"
-                    continue
-
-        if not (self._elements[-1].alignment == "header" and ignore_header):
-            output += self._elements[-1].ocr_text()
+            output += element.ocr_text()
+            output += " "
+        output += self._elements[-1].ocr_text()
         return output
 
 class Paragraph(HOCRElement):
