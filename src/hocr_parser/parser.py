@@ -3,7 +3,7 @@ __author__ = 'Rafa Haro <rh@athento.com>; edited by Andrew J Freyer <andrew.frey
 
 from abc import ABCMeta, abstractmethod
 from bs4 import BeautifulSoup
-import re
+import re 
 
 SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
 SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
@@ -123,7 +123,7 @@ class HOCRDocument(HOCRElement):
                     content=section_split[1]
 
                     output_split[key]=content
-                    
+
                 if len(section_split) == 1:
                     output_split[key]=content
                 else:
