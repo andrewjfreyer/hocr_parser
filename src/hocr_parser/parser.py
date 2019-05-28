@@ -1,8 +1,13 @@
 __author__ = 'Rafa Haro <rh@athento.com>; edited by Andrew J Freyer <andrew.freyer@gmail.com>'
 
+
 from abc import ABCMeta, abstractmethod
 from bs4 import BeautifulSoup
 import re
+
+
+global SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
+global SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
 
 
 class HOCRElement:
@@ -10,8 +15,6 @@ class HOCRElement:
     __metaclass__ = ABCMeta
 
     COORDINATES_PATTERN = re.compile("bbox\s(-?[0-9.]+)\s(-?[0-9.]+)\s(-?[0-9.]+)\s(-?[0-9.]+)")
-    SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
-    SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
 
     def __init__(self, hocr_html, parent, next_tag, next_attribute, next_class):
         self.__coordinates = (0, 0, 0, 0)
