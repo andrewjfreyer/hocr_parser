@@ -123,6 +123,9 @@ class HOCRDocument(HOCRElement):
                     content=section_split[1]
 
                     output_split[key]=content
+                    
+                if len(section_split) == 1:
+                    output_split[key]=content
                 else:
                     raise Exception("cannot have more than one section header per section.")
 
