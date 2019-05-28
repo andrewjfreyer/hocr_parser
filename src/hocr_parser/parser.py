@@ -233,7 +233,7 @@ class Paragraph(HOCRElement):
         return len(self._elements)
 
     @property
-    def alignment(self, dpi=250):
+    def alignment(self, dpi=300):
         if len(self._elements) == 0:
             return "none"
         
