@@ -201,7 +201,7 @@ class Area(HOCRElement):
         for element in self._elements[:-1]:
             alignment=element.alignment
 
-            print "[" + alignment + "] " + element.ocr_text()
+            print "[" + alignment + "] " + element.ocr_text().encode('utf-8')
 
             if not (alignment == "header" and ignore_header):
                
