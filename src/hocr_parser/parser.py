@@ -10,6 +10,8 @@ class HOCRElement:
     __metaclass__ = ABCMeta
 
     COORDINATES_PATTERN = re.compile("bbox\s(-?[0-9.]+)\s(-?[0-9.]+)\s(-?[0-9.]+)\s(-?[0-9.]+)")
+    SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
+    SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
 
     def __init__(self, hocr_html, parent, next_tag, next_attribute, next_class):
         self.__coordinates = (0, 0, 0, 0)
@@ -93,13 +95,37 @@ class HOCRDocument(HOCRElement):
 
         super(HOCRDocument, self).__init__(hocr_html, None, 'div', Page.HOCR_PAGE_TAG, Page)
 
-    def ocr_text(self,ignore_header=False):
+    def ocr_text(self,ignore_header=False, section_group=False):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text(ignore_header = ignore_header)
+            output += element.ocr_text(
+                ignore_header = ignore_header,
+                section_group =  section_group)
+
             if len(output) > 0: 
                 output += "\n\n"
-        output += self._elements[-1].ocr_text(ignore_header=ignore_header)
+        
+        output += self._elements[-1].ocr_text(
+            ignore_header=ignore_header,
+            section_group =  section_group)
+
+        if section_group:
+            split_output=output.split(SECTION_HEADER_START)
+
+            key="INTRODUCTION"
+            output_split={}
+            for section in split_output:
+                section_split=section.split(SECTION_HEADER_END)
+                if len(section_split) == 2:
+                    key=section_split[0]
+                    content=section_split[1]
+
+                    output_split[key]=content
+                else:
+                    raise Exception("cannot have more than one section header per section.")
+
+            return output_split
+
         return output
 
     @property
@@ -128,13 +154,20 @@ class Page(HOCRElement):
     def __init__(self, parent, hocr_html):
         super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
 
-    def ocr_text(self,ignore_header=False):
+    def ocr_text(self,ignore_header=False, section_group=False):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text(ignore_header=ignore_header)
+            output += element.ocr_text(
+                ignore_header=ignore_header, 
+                section_group=section_group
+            )
+
             if len(output) > 0: 
                 output += "\n"
-        output += self._elements[-1].ocr_text(ignore_header=ignore_header)
+        output += self._elements[-1].ocr_text(
+            ignore_header = ignore_header,
+            section_group = section_group)
+
         return output
 
     @property
@@ -160,13 +193,23 @@ class Area(HOCRElement):
     def nparagraphs(self):
         return len(self._elements)
 
-    def ocr_text(self, ignore_header=False):
+    def ocr_text(self, ignore_header=False, section_group = False):
         output = ""
         for element in self._elements[:-1]:
-            if not (element.alignment == "header" and ignore_header):
-                output += element.ocr_text()
+            alignment=element.alignment
+
+            if not (alignment == "header" and ignore_header):
+                if alignment == "center" and section_group:
+                    output += SECTION_HEADER_START + element.ocr_text() + SECTION_HEADER_END
+
+                else:
+                    output += element.ocr_text()
                 if len(output) > 0: 
                     output += "\n"
+                    continue
+
+
+
 
         if not (self._elements[-1].alignment == "header" and ignore_header):
             output += self._elements[-1].ocr_text()
