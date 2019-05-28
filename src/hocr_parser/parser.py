@@ -5,11 +5,6 @@ from abc import ABCMeta, abstractmethod
 from bs4 import BeautifulSoup
 import re
 
-
-global SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
-global SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
-
-
 class HOCRElement:
 
     __metaclass__ = ABCMeta
@@ -89,6 +84,9 @@ class HOCRElement:
 
 class HOCRDocument(HOCRElement):
 
+    SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
+    SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
+
     def __init__(self, source, is_path=False):
 
         if not is_path:
@@ -115,7 +113,7 @@ class HOCRDocument(HOCRElement):
         if section_group:
             split_output=output.split(SECTION_HEADER_START)
 
-            key="INTRODUCTION"
+            key="Introduction"
             output_split={}
             for section in split_output:
                 section_split=section.split(SECTION_HEADER_END)
@@ -184,7 +182,9 @@ class Page(HOCRElement):
 class Area(HOCRElement):
 
     HOCR_AREA_TAG = "ocr_carea"
-
+    SECTION_HEADER_START = "<!--SECTION_HEADER_START-->"
+    SECTION_HEADER_END = "<!--SECTION_HEADER_END-->"
+    
     def __init__(self, parent, hocr_html):
         super(Area, self).__init__(hocr_html, parent, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
 
