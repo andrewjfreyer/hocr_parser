@@ -16,7 +16,7 @@ class HOCRElement:
 
     def __init__(self, hocr_html, parent, next_tag, next_attribute, next_class):
         self.__coordinates = (0, 0, 0, 0)
-        self._hocr_html = hocr_html
+        self._hocr_html = hocr_html 
         self._id = None
         self._parent = parent
         self._elements = self._parse(next_tag, next_attribute, next_class)
@@ -99,37 +99,12 @@ class HOCRDocument(HOCRElement):
     def ocr_text(self,ignore_header=False, section_group=False):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text(
-                ignore_header = ignore_header,
-                section_group =  section_group)
+            output += element.ocr_text()
 
             if len(output) > 0: 
                 output += "\n\n"
         
-        output += self._elements[-1].ocr_text(
-            ignore_header = ignore_header,
-            section_group = section_group)
-
-        if section_group:
-            split_output=output.split(SECTION_HEADER_START)
-
-            key="INTRODUCTION"
-            output_split={}
-            for section in split_output:
-                
-                section_split=section.split(SECTION_HEADER_END)
-                if len(section_split) == 2:
-                    key=section_split[0]
-                    content=section_split[1]
-                    output_split[key]=content
-
-                if len(section_split) == 1:
-                    output_split[key]=section_split[0]
-                else:
-                    raise Exception("cannot have more than one section header per section.")
-
-            return output_split
-
+        output += self._elements[-1].ocr_text()
         return output
 
     @property
@@ -220,94 +195,11 @@ class Paragraph(HOCRElement):
     def nlines(self):
         return len(self._elements)
 
-    @property
-    def alignment(self, dpi=300):
-        if len(self._elements) == 0:
-            return "none"
-        
-        default_dpi=dpi
-        margin = 1.0
-
-        page_width=default_dpi*(8.5 - margin * 2)
-        grid_width=default_dpi * 0.1
-        page_center=page_width / 2
-
-        page_header = 1.0
-
-        left=[]
-        right=[]
-        bottom = []
-        center=[]
-        indented = False
-        header = False
-
-        for line in self._elements:
-
-            tab_round_left=int((line.coordinates[0] - margin*default_dpi) / grid_width) * grid_width
-            tab_round_right=int((line.coordinates[2] - margin*default_dpi) / grid_width) * grid_width
-
-            if len(left) == 0:
-                #is the first row within a half inch of the border here?
-                if tab_round_left <= (default_dpi * 0.5 ):
-
-                    #reduce to 0 for averaging
-                    tab_round_left=0
-
-                    #mark as indended
-                    indented=True
-
-            left.append(tab_round_left) 
-            right.append(tab_round_right)
-            bottom.append(line.coordinates[1])
-            center.append((tab_round_right + tab_round_left)/2)
-
-        #is within header?
-        header = max(bottom) < page_header * default_dpi
-
-        #set to default dpi
-        stddev_left=default_dpi
-        stddev_right=default_dpi
-        stddev_center=default_dpi
-
-        #calculate statistics
-        if len(left) > 0:
-            mean_left = sum(left)/len(left)
-            variance_left = sum([((x - mean_left) ** 2) for x in left]) / len(left)
-            stddev_left = variance_left ** 0.5
-
-        if len(right) > 0:
-            mean_right = sum(right)/len(right)
-            variance_right = sum([((x - mean_right) ** 2) for x in right]) / len(right)
-            stddev_right = variance_right ** 0.5        
-
-        if len(center) > 0:
-            mean_center = sum(center)/len(center)
-            variance_center = sum([((x - mean_center) ** 2) for x in center]) / len(center)
-            stddev_center = variance_center ** 0.5
-            center_offset_center = abs(page_center - mean_center)
-
-        left_aligned = (stddev_left == 0 and not center_offset_center < grid_width)
-        right_aligned = (stddev_right < grid_width and abs(max(right) - page_width) < grid_width and not center_offset_center < grid_width)
-        center_aligned = (stddev_center < grid_width and center_offset_center < grid_width and len(self._elements) < 2 )
-
-        if header:
-            return "header"
-        elif left_aligned and not right_aligned: 
-            return "left"
-        elif not left_aligned and right_aligned: 
-            return "right"
-        elif left_aligned and right_aligned and not center_aligned: 
-            return "justified"    
-        elif center_aligned: 
-            return "centered" 
-        else:
-            return "left"
-
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
             output += element.ocr_text()
-            output += "\n\n"
+            output += " "
         output += self._elements[-1].ocr_text()
         return output
 
