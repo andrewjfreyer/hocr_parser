@@ -314,6 +314,6 @@ class Word(HOCRElement):
     def ocr_text(self):
         word = self._hocr_html.string
         if word is not None:
-            return word.encode('utf-8')
+            return word
         else:
             return ""
