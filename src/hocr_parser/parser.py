@@ -164,6 +164,7 @@ class Page(HOCRElement):
     HOCR_PAGE_TAG = "ocr_page"
 
     def __init__(self, parent, hocr_html):
+        self._page = self
         super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
 
     def ocr_text(self):
@@ -190,7 +191,7 @@ class Area(HOCRElement):
     HOCR_AREA_TAG = "ocr_carea"
 
     def __init__(self, parent, hocr_html):
-        self._page = parent
+        self._page = parent.page
         super(Area, self).__init__(hocr_html, parent, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
 
     @property
