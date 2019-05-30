@@ -18,7 +18,6 @@ class HOCRElement:
         self.__coordinates = (0, 0, 0, 0)
         self._hocr_html = hocr_html 
         self._id = None
-        self._page = None
         self._parent = parent
         self._elements = self._parse(next_tag, next_attribute, next_class)
 
@@ -165,7 +164,6 @@ class Page(HOCRElement):
 
     def __init__(self, parent, hocr_html):
         super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
-        self._page = self
 
     def ocr_text(self):
         output = ""
