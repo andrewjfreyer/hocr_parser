@@ -18,17 +18,7 @@ class HOCRElement:
         self.__coordinates = (0, 0, 0, 0)
         self._hocr_html = hocr_html 
         self._id = None
-
-        if parent is not None:
-            self._parent = parent
-
-            if parent.page is not None:
-                self._page = parent.page
-            else:
-                self._page = None 
-        else:
-            self._page = None 
-
+        self._parent = parent
         self._elements = self._parse(next_tag, next_attribute, next_class)
 
     def _parse(self, next_tag, next_attributte, next_class):
@@ -60,10 +50,6 @@ class HOCRElement:
     @property
     def coordinates(self):
         return self.__coordinates
-
-    @property
-    def page(self):
-        return self._page
 
     @property
     def width(self):
@@ -100,6 +86,22 @@ class HOCRElement:
     @property
     def rightAlignedWithParent(self):
         return abs(self.parent.right - self.right) < 10
+
+    @property
+    def page(self):
+        _parent=self.parent
+        for level in range(1,5):
+            print str(level)
+            if _parent is not None:
+                if type(_parent) == type(Page):
+                    return _parent 
+                else:
+                    try:
+                        _parent = _parent.parent
+                    except:
+                        return self
+
+        return self
 
     @property
     def html(self):
@@ -174,7 +176,6 @@ class Page(HOCRElement):
 
     def __init__(self, parent, hocr_html):
         super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
-        self._page = self
 
     def ocr_text(self):
         output = ""
@@ -201,7 +202,6 @@ class Area(HOCRElement):
 
     def __init__(self, parent, hocr_html):
         super(Area, self).__init__(hocr_html, parent, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
-        self._page = parent
 
     @property
     def paragraphs(self):
@@ -294,7 +294,6 @@ class Word(HOCRElement):
     def ocr_text(self):
         word = self._hocr_html.string
         if word is not None:
-            print self.page
             return word
         else:
             return ""
