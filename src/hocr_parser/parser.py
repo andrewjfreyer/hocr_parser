@@ -64,6 +64,10 @@ class HOCRElement:
         return self.__coordinates[0]
 
     @property
+    def center(self):
+        return int((self.__coordinates[2] - self.__coordinates[0])/2)
+
+    @property
     def right(self):
         return self.__coordinates[2]
 
@@ -77,11 +81,23 @@ class HOCRElement:
 
     @property
     def leftAlignedWithParent(self):
+        print self.page;
         return abs(self.parent.left - self.left) < 10
 
     @property
     def rightAlignedWithParent(self):
         return abs(self.parent.right - self.right) < 10
+
+    @property
+    def page(self):
+        _parent=self.parent
+        for level in range(1,5):
+            if _parent.__name__ == "Page":
+                return _parent 
+            else:
+                _parent = _parent.parent
+
+        return self
 
     @property
     def html(self):
