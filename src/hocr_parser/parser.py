@@ -261,6 +261,7 @@ class Line(HOCRElement):
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
+            print self.page
             output += element.ocr_text()
             output += " "
         output += self._elements[-1].ocr_text()
