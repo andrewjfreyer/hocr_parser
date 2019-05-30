@@ -93,7 +93,7 @@ class HOCRElement:
         for level in range(1,5):
             print str(level)
             if _parent is not None:
-                if type(_parent) == type(Page):
+                if isinstance(_parent, Page):
                     return _parent 
                 else:
                     try:
