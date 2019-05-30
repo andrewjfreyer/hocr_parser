@@ -92,10 +92,14 @@ class HOCRElement:
     def page(self):
         _parent=self.parent
         for level in range(1,5):
-            if type(_parent) == type(Page):
-                return _parent 
-            else:
-                _parent = _parent.parent
+            if _parent is not None:
+                if type(_parent) == type(Page):
+                    return _parent 
+                else:
+                    try:
+                        _parent = _parent.parent
+                    except:
+                        return self
 
         return self
 
