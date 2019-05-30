@@ -19,6 +19,7 @@ class HOCRElement:
         self._hocr_html = hocr_html 
         self._id = None
         self._parent = parent
+        self._page = parent.page
         self._elements = self._parse(next_tag, next_attribute, next_class)
 
     def _parse(self, next_tag, next_attributte, next_class):
@@ -164,6 +165,7 @@ class Page(HOCRElement):
 
     def __init__(self, parent, hocr_html):
         super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
+        self._page = self
 
     def ocr_text(self):
         output = ""
@@ -190,7 +192,7 @@ class Area(HOCRElement):
 
     def __init__(self, parent, hocr_html):
         super(Area, self).__init__(hocr_html, parent, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
-        self._page = parent.page
+        self._page = parent
 
     @property
     def paragraphs(self):
@@ -214,7 +216,6 @@ class Paragraph(HOCRElement):
 
     def __init__(self, parent, hocr_html):
         super(Paragraph, self).__init__(hocr_html, parent, 'span', Line.HOCR_LINE_TAG, Line)
-        self._page = parent.page
 
     @property
     def lines(self):
@@ -239,7 +240,6 @@ class Line(HOCRElement):
     def __init__(self, parent, hocr_html):
         super(Line, self).__init__(hocr_html, parent, 'span', Word.HOCR_WORD_TAG, Word)
         self._ocr_text_normalized = None # custom property, none if not assigned
-        self._page = parent.page
 
     @property
     def words(self):
@@ -273,7 +273,6 @@ class Word(HOCRElement):
 
     def __init__(self, parent, hocr_html):
         super(Word, self).__init__(hocr_html, parent, None, None, None)
-        self._page = parent.page
         title = hocr_html.attrs['title']
         titlesplit = title.split(';')
         for element in titlesplit:
