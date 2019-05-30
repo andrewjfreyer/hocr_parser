@@ -190,7 +190,7 @@ class Area(HOCRElement):
     HOCR_AREA_TAG = "ocr_carea"
 
     def __init__(self, parent, hocr_html):
-        self.page = parent
+        self._page = parent
         super(Area, self).__init__(hocr_html, parent, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
 
     @property
@@ -214,7 +214,7 @@ class Paragraph(HOCRElement):
     HOCR_PAR_TAG = "ocr_par"
 
     def __init__(self, parent, hocr_html):
-        self.page = parent.page
+        self._page = parent.page
         super(Paragraph, self).__init__(hocr_html, parent, 'span', Line.HOCR_LINE_TAG, Line)
 
     @property
@@ -238,7 +238,7 @@ class Line(HOCRElement):
     HOCR_LINE_TAG = "ocr_line"
 
     def __init__(self, parent, hocr_html):
-        self.page = parent.page
+        self._page = parent.page
         super(Line, self).__init__(hocr_html, parent, 'span', Word.HOCR_WORD_TAG, Word)
         self._ocr_text_normalized = None # custom property, none if not assigned
 
@@ -273,6 +273,7 @@ class Word(HOCRElement):
     _xconfs = None
 
     def __init__(self, parent, hocr_html):
+        self._page = parent.page
         super(Word, self).__init__(hocr_html, parent, None, None, None)
         title = hocr_html.attrs['title']
         titlesplit = title.split(';')
