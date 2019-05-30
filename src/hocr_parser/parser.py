@@ -18,8 +18,14 @@ class HOCRElement:
         self.__coordinates = (0, 0, 0, 0)
         self._hocr_html = hocr_html 
         self._id = None
-        self._parent = parent
-        self._page = parent.page
+        if parent is not None:
+            self._parent = parent
+
+            if parent.page is not None:
+                self._page = parent.page
+            else:
+                self._page = None 
+                
         self._elements = self._parse(next_tag, next_attribute, next_class)
 
     def _parse(self, next_tag, next_attributte, next_class):
