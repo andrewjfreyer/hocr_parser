@@ -160,7 +160,7 @@ class Page(HOCRElement):
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
-            output += element.ocr_text()
+            output += "[ T: Area,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" +element.ocr_text()
 
             if len(output) > 0: 
                 output += "\n"
@@ -194,7 +194,7 @@ class Area(HOCRElement):
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
-            output += "[ T: Area,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" +  element.ocr_text()
+            output += "[ T: Para,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" +  element.ocr_text()
             output += " "
         output += self._elements[-1].ocr_text()
         return output
@@ -217,7 +217,7 @@ class Paragraph(HOCRElement):
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
-            output += "[ T: Para,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" + element.ocr_text()
+            output += "[ T: Line,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" + element.ocr_text()
             output += " "
         output += self._elements[-1].ocr_text()
         return output
@@ -241,7 +241,7 @@ class Line(HOCRElement):
     def ocr_text(self):
         output = ""
         for element in self._elements[:-1]:
-            output += "[ T: Line,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" + element.ocr_text()
+            output += element.ocr_text()
             output += " "
         output += self._elements[-1].ocr_text()
         return output
