@@ -66,7 +66,7 @@ class HOCRElement:
 
     @property
     def center(self):
-        return int((self.__coordinates[2] - self.__coordinates[0])/2)
+        return int((self.__coordinates[2] + self.__coordinates[0])/2)
 
     @property
     def right(self):
