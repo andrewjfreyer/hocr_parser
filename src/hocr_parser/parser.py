@@ -255,8 +255,8 @@ class Paragraph(HOCRElement):
         output = ""
         for line in self._elements[:-1]:
             if line.centerAlignedWithPage:
-                print line.ocr_text().encode('utf-8')
-                
+                output +=  "[HEADING]"
+            
             output +=  line.ocr_text()
             output += " "
         output += self._elements[-1].ocr_text()
