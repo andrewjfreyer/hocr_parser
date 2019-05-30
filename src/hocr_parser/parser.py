@@ -92,7 +92,7 @@ class HOCRElement:
     def page(self):
         _parent=self.parent
         for level in range(1,5):
-            if _parent.__name__ == "Page":
+            if type(_parent) == type(Page):
                 return _parent 
             else:
                 _parent = _parent.parent
