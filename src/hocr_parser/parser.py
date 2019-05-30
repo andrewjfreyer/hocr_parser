@@ -18,6 +18,7 @@ class HOCRElement:
         self.__coordinates = (0, 0, 0, 0)
         self._hocr_html = hocr_html 
         self._id = None
+        self._page = None
         self._parent = parent
         self._elements = self._parse(next_tag, next_attribute, next_class)
 
@@ -52,6 +53,10 @@ class HOCRElement:
         return self.__coordinates
 
     @property
+    def page(self):
+        return self._page
+
+    @property
     def width(self):
         return self.__coordinates[2] - self.__coordinates[0]
 
@@ -81,27 +86,11 @@ class HOCRElement:
 
     @property
     def leftAlignedWithParent(self):
-        print self.page;
         return abs(self.parent.left - self.left) < 10
 
     @property
     def rightAlignedWithParent(self):
         return abs(self.parent.right - self.right) < 10
-
-    @property
-    def page(self):
-        _parent=self.parent
-        for level in range(1,5):
-            if _parent is not None:
-                if type(_parent) == type(Page):
-                    return _parent 
-                else:
-                    try:
-                        _parent = _parent.parent
-                    except:
-                        return self
-
-        return self
 
     @property
     def html(self):
@@ -175,6 +164,7 @@ class Page(HOCRElement):
     HOCR_PAGE_TAG = "ocr_page"
 
     def __init__(self, parent, hocr_html):
+        self.page = None
         super(Page, self).__init__(hocr_html, parent, 'div', Area.HOCR_AREA_TAG, Area)
 
     def ocr_text(self):
@@ -201,6 +191,7 @@ class Area(HOCRElement):
     HOCR_AREA_TAG = "ocr_carea"
 
     def __init__(self, parent, hocr_html):
+        self.page = parent
         super(Area, self).__init__(hocr_html, parent, 'p', Paragraph.HOCR_PAR_TAG, Paragraph)
 
     @property
@@ -224,6 +215,7 @@ class Paragraph(HOCRElement):
     HOCR_PAR_TAG = "ocr_par"
 
     def __init__(self, parent, hocr_html):
+        self.page = parent.page
         super(Paragraph, self).__init__(hocr_html, parent, 'span', Line.HOCR_LINE_TAG, Line)
 
     @property
@@ -247,6 +239,7 @@ class Line(HOCRElement):
     HOCR_LINE_TAG = "ocr_line"
 
     def __init__(self, parent, hocr_html):
+        self.page = parent.page
         super(Line, self).__init__(hocr_html, parent, 'span', Word.HOCR_WORD_TAG, Word)
         self._ocr_text_normalized = None # custom property, none if not assigned
 
@@ -294,6 +287,7 @@ class Word(HOCRElement):
     def ocr_text(self):
         word = self._hocr_html.string
         if word is not None:
+            print self.page
             return word
         else:
             return ""
