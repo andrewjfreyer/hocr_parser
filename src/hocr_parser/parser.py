@@ -164,7 +164,7 @@ class Page(HOCRElement):
 
             if len(output) > 0: 
                 output += "\n"
-        output += self._elements[-1].ocr_text()
+        output += "[ T: Area,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" + self._elements[-1].ocr_text()
             
         return output
 
@@ -196,7 +196,7 @@ class Area(HOCRElement):
         for element in self._elements[:-1]:
             output += "[ T: Para,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" +  element.ocr_text()
             output += " "
-        output += self._elements[-1].ocr_text()
+        output += "[ T: Para,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" + self._elements[-1].ocr_text()
         return output
 
 class Paragraph(HOCRElement):
@@ -219,7 +219,7 @@ class Paragraph(HOCRElement):
         for element in self._elements[:-1]:
             output += "[ T: Line,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" + element.ocr_text()
             output += " "
-        output += self._elements[-1].ocr_text()
+        output += "[ T: Line,  L : " + str(element.leftAlignedWithParent) + ", R : "+ str(element.rightAlignedWithParent)+ "]" +self._elements[-1].ocr_text()
         return output
 
 class Line(HOCRElement):
