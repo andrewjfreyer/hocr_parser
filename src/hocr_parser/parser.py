@@ -98,7 +98,6 @@ class HOCRElement:
 
     @property
     def centerAlignedWithPage(self):
-        print str(self.page.center) + " - " + str(self.center) + " = " + str(abs(self.page.center - self.center))
         return abs(self.page.center - self.center) < 100
 
     @property
@@ -197,8 +196,8 @@ class Page(HOCRElement):
 
     def ocr_text(self):
         output = ""
-        for element in self._elements[:-1]:
-            output += element.ocr_text()
+        for area in self._elements[:-1]:
+            output += area.ocr_text()
 
             if len(output) > 0: 
                 output += "\n"
@@ -231,9 +230,9 @@ class Area(HOCRElement):
 
     def ocr_text(self):
         output = ""
-        for element in self._elements[:-1]:
-            output += element.ocr_text()
-            output += " "
+        for paragraph in self._elements[:-1]:
+            output += paragraph.ocr_text()
+            output += "\n"
         output += self._elements[-1].ocr_text()
         return output
 
@@ -254,8 +253,11 @@ class Paragraph(HOCRElement):
 
     def ocr_text(self):
         output = ""
-        for element in self._elements[:-1]:
-            output +=  element.ocr_text()
+        for line in self._elements[:-1]:
+            if line.centerAlignedWithPage:
+                print "centered: " + line.ocr_text()
+
+            output +=  line.ocr_text()
             output += " "
         output += self._elements[-1].ocr_text()
         return output
@@ -278,11 +280,8 @@ class Line(HOCRElement):
 
     def ocr_text(self):
         output = ""
-        for element in self._elements[:-1]:
-            if element.centerAlignedWithPage:
-                print "centered: " + element.ocr_text()
-
-            output += element.ocr_text()
+        for word in self._elements[:-1]:
+            output += word.ocr_text()
             output += " "
         output += self._elements[-1].ocr_text()
         return output
