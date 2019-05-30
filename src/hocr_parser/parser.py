@@ -255,7 +255,7 @@ class Paragraph(HOCRElement):
         output = ""
         for line in self._elements[:-1]:
             if line.centerAlignedWithPage:
-                print line.ocr_text()
+                print line.ocr_text().encode('utf-8')
                 
             output +=  line.ocr_text()
             output += " "
@@ -314,6 +314,6 @@ class Word(HOCRElement):
     def ocr_text(self):
         word = self._hocr_html.string
         if word is not None:
-            return word
+            return word.encode('utf-8')
         else:
             return ""
