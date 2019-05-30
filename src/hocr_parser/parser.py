@@ -98,6 +98,7 @@ class HOCRElement:
 
     @property
     def centerAlignedWithPage(self):
+        print str(self.page.center) + " - " + str(self.center) + " = " + str(abs(self.page.center - self.center))
         return abs(self.page.center - self.center) < 100
 
     @property
