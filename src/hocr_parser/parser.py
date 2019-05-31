@@ -82,23 +82,23 @@ class HOCRElement:
 
     @property
     def leftAlignedWithParent(self):
-        return abs(self.parent.left - self.left) < 100
+        return abs(self.parent.left - self.left) < 25
 
     @property
     def rightAlignedWithParent(self):
-        return abs(self.parent.right - self.right) < 100
+        return abs(self.parent.right - self.right) < 25
 
     @property
     def leftAlignedWithPage(self):
-        return abs(self.page.left - self.left) < 100
+        return abs(self.page.left - self.left) < 25
 
     @property
     def rightAlignedWithPage(self):
-        return abs(self.page.right - self.right) < 100
+        return abs(self.page.right - self.right) < 25
 
     @property
     def centerAlignedWithPage(self):
-        return abs(self.page.center - self.center) < 100
+        return abs(self.page.center - self.center) < 25
 
     @property
     def page(self):
