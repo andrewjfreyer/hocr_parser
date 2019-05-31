@@ -81,26 +81,6 @@ class HOCRElement:
         return self.__coordinates[3]
 
     @property
-    def leftAlignedWithParent(self):
-        return abs(self.parent.left - self.left) < 25
-
-    @property
-    def rightAlignedWithParent(self):
-        return abs(self.parent.right - self.right) < 25
-
-    @property
-    def leftAlignedWithPage(self):
-        return abs(self.page.left - self.left) < 25
-
-    @property
-    def rightAlignedWithPage(self):
-        return abs(self.page.right - self.right) < 25
-
-    @property
-    def centerAlignedWithPage(self):
-        return abs(self.page.center - self.center) < 25
-
-    @property
     def page(self):
         if self._page is not None: 
             return self._page
@@ -256,6 +236,8 @@ class Paragraph(HOCRElement):
         for line in self._elements[:-1]:
             if line.centerAlignedWithPage:
                 output +=  "[HEADING]"
+            else:
+                output += "[" + str(line.centerAlignedWithPageNUM) + "]"
             
             output +=  line.ocr_text()
             output += " "
@@ -269,6 +251,30 @@ class Line(HOCRElement):
     def __init__(self, parent, hocr_html):
         super(Line, self).__init__(hocr_html, parent, 'span', Word.HOCR_WORD_TAG, Word)
         self._ocr_text_normalized = None # custom property, none if not assigned
+
+    @property
+    def leftAlignedWithParent(self):
+        return abs(self.parent.left - self.left) < 25
+
+    @property
+    def rightAlignedWithParent(self):
+        return abs(self.parent.right - self.right) < 25
+
+    @property
+    def leftAlignedWithPage(self):
+        return abs(self.page.left - self.left) < 25
+
+    @property
+    def rightAlignedWithPage(self):
+        return abs(self.page.right - self.right) < 25
+
+    @property
+    def centerAlignedWithPage(self):
+        return abs(self.page.center - self.center) < 25
+
+    @property
+    def centerAlignedWithPageNUM(self):
+        return abs(self.page.center - self.center)
 
     @property
     def words(self):
