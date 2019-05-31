@@ -235,17 +235,15 @@ class Paragraph(HOCRElement):
         output = ""
         for line in self._elements[:-1]:
             if line.centerAlignedWithPage:
-                output +=  "[HEADING]"
+                output +=  "[CENTERED]" + line.ocr_text() + "[/CENTERED]"
             else:
-                output += "[" + str(line.centerAlignedWithPageNUM) + "]"
-            
-            output +=  line.ocr_text()
+                output +=  line.ocr_text()
             output += " "
 
         if self._elements[-1].centerAlignedWithPage:
-            output +=  "[HEADING]"
-        
-        output += self._elements[-1].ocr_text()
+            output +=  "[CENTERED]" + self._elements[-1].ocr_text() + "[/CENTERED]"
+        else:
+            output += self._elements[-1].ocr_text()
         return output
 
 class Line(HOCRElement):
@@ -275,10 +273,6 @@ class Line(HOCRElement):
     @property
     def centerAlignedWithPage(self):
         return abs(self.page.center - self.center) < 10
-
-    @property
-    def centerAlignedWithPageNUM(self):
-        return abs(self.page.center - self.center)
 
     @property
     def words(self):
