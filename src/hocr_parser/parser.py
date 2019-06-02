@@ -234,16 +234,10 @@ class Paragraph(HOCRElement):
     def ocr_text(self):
         output = ""
         for line in self._elements[:-1]:
-            if line.centerAlignedWithPage:
-                output +=  "[CENTERED]" + line.ocr_text() + "[/CENTERED]"
-            else:
-                output +=  line.ocr_text()
+            output +=  line.ocr_text()
             output += " "
 
-        if self._elements[-1].centerAlignedWithPage:
-            output +=  "[CENTERED]" + self._elements[-1].ocr_text() + "[/CENTERED]"
-        else:
-            output += self._elements[-1].ocr_text()
+        output += self._elements[-1].ocr_text()
         return output
 
 class Line(HOCRElement):
@@ -259,16 +253,8 @@ class Line(HOCRElement):
         return abs(self.parent.left - self.left) < 10
 
     @property
-    def rightAlignedWithParent(self):
-        return abs(self.parent.right - self.right) < 10
-
-    @property
     def leftAlignedWithPage(self):
         return abs(self.page.left - self.left) < 10
-
-    @property
-    def rightAlignedWithPage(self):
-        return abs(self.page.right - self.right) < 10
 
     @property
     def centerAlignedWithPage(self):
