@@ -212,7 +212,7 @@ class Area(HOCRElement):
         output = ""
         for paragraph in self._elements[:-1]:
             output += paragraph.ocr_text()
-            output += "\n"
+            output += "<br><br>"
         output += self._elements[-1].ocr_text()
         return output
 
